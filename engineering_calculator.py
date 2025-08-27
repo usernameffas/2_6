@@ -10,11 +10,36 @@ from PyQt5.QtGui import QFont
 plugin_path = os.path.join(os.path.dirname(QtCore.__file__), 'Qt5', 'plugins', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 
-class EngineeringCalculator(QMainWindow):
+class Calculator:
+    """기본 계산기 클래스"""
     def __init__(self):
-        super().__init__()
+        pass
+    
+    def add(self, a, b):
+        """덧셈"""
+        return a + b
+    
+    def subtract(self, a, b):
+        """뺄셈"""
+        return a - b
+    
+    def multiply(self, a, b):
+        """곱셈"""
+        return a * b
+    
+    def divide(self, a, b):
+        """나눗셈"""
+        if b == 0:
+            raise ValueError("0으로 나눌 수 없습니다")
+        return a / b
+
+class EngineeringCalculator(QMainWindow, Calculator):
+    def __init__(self):
+        QMainWindow.__init__(self)
+        Calculator.__init__(self)
         self.initUI()
         self.display_text = "0"
+        self.memory = 0  # mc 버튼용 메모리 저장값
         
     def initUI(self):
         self.setWindowTitle('Engineering Calculator')
@@ -127,7 +152,7 @@ class EngineeringCalculator(QMainWindow):
             }}
         """
     
-    # 삼각함수 관련 기능들
+    # 필수 구현 - 삼각함수 관련 기능들
     def calculate_sin(self, x):
         """사인 함수 계산"""
         return math.sin(math.radians(x))
@@ -164,55 +189,52 @@ class EngineeringCalculator(QMainWindow):
         """x의 세제곱 계산"""
         return x ** 3
     
+    # 보너스 과제 - mc 버튼 기능 구현
+    def memory_clear(self):
+        """메모리 지우기 (mc 버튼)"""
+        self.memory = 0
+        print("메모리가 지워졌습니다.")
+    
+    # 기타 필요한 함수들 (빈 껍데기)
     def calculate_power(self, x, y):
-        """x의 y제곱 계산"""
-        return x ** y
+        """x의 y제곱 계산 (빈 껍데기)"""
+        pass
     
     def calculate_sqrt(self, x):
-        """제곱근 계산"""
-        if x < 0:
-            raise ValueError("음수의 제곱근을 계산할 수 없습니다")
-        return math.sqrt(x)
+        """제곱근 계산 (빈 껍데기)"""
+        pass
     
     def calculate_cbrt(self, x):
-        """세제곱근 계산"""
-        return x ** (1/3) if x >= 0 else -((-x) ** (1/3))
+        """세제곱근 계산 (빈 껍데기)"""
+        pass
     
     def calculate_reciprocal(self, x):
-        """역수 계산 (1/x)"""
-        if x == 0:
-            raise ValueError("0으로 나눌 수 없습니다")
-        return 1 / x
+        """역수 계산 (빈 껍데기)"""
+        pass
     
     def calculate_factorial(self, x):
-        """팩토리얼 계산"""
-        if x < 0 or x != int(x):
-            raise ValueError("팩토리얼은 음이 아닌 정수에 대해서만 정의됩니다")
-        return math.factorial(int(x))
+        """팩토리얼 계산 (빈 껍데기)"""
+        pass
     
     def calculate_ln(self, x):
-        """자연로그 계산"""
-        if x <= 0:
-            raise ValueError("로그의 인수는 양수여야 합니다")
-        return math.log(x)
+        """자연로그 계산 (빈 껍데기)"""
+        pass
     
     def calculate_log10(self, x):
-        """상용로그 계산"""
-        if x <= 0:
-            raise ValueError("로그의 인수는 양수여야 합니다")
-        return math.log10(x)
+        """상용로그 계산 (빈 껍데기)"""
+        pass
     
     def calculate_exp(self, x):
-        """e^x 계산"""
-        return math.exp(x)
+        """e^x 계산 (빈 껍데기)"""
+        pass
     
     def calculate_10_power_x(self, x):
-        """10^x 계산"""
-        return 10 ** x
+        """10^x 계산 (빈 껍데기)"""
+        pass
     
     def get_e(self):
-        """자연상수 e 반환"""
-        return math.e
+        """자연상수 e 반환 (빈 껍데기)"""
+        pass
     
     def button_clicked(self, text):
         """Handle button click events"""
@@ -248,7 +270,7 @@ class EngineeringCalculator(QMainWindow):
                 # Equals (basic calculation)
                 self.calculate_result()
                 
-            # Scientific function buttons
+            # 필수 구현 - Scientific function buttons
             elif text == "sin":
                 self.apply_function(self.calculate_sin)
             elif text == "cos":
@@ -263,30 +285,20 @@ class EngineeringCalculator(QMainWindow):
                 self.apply_function(self.calculate_tanh)
             elif text == "π":
                 self.display_text = str(self.get_pi())
-            elif text == "e":
-                self.display_text = str(self.get_e())
             elif text == "x²":
                 self.apply_function(self.calculate_square)
             elif text == "x³":
                 self.apply_function(self.calculate_cube)
-            elif text == "²√x":
-                self.apply_function(self.calculate_sqrt)
-            elif text == "³√x":
-                self.apply_function(self.calculate_cbrt)
-            elif text == "1/x":
-                self.apply_function(self.calculate_reciprocal)
-            elif text == "x!":
-                self.apply_function(self.calculate_factorial)
-            elif text == "ln":
-                self.apply_function(self.calculate_ln)
-            elif text == "log₁₀":
-                self.apply_function(self.calculate_log10)
-            elif text == "eˣ":
-                self.apply_function(self.calculate_exp)
-            elif text == "10ˣ":
-                self.apply_function(self.calculate_10_power_x)
-            elif text == "%":
-                self.apply_function(lambda x: x / 100)
+                
+            # 보너스 과제 - mc 버튼
+            elif text == "mc":
+                self.memory_clear()
+                
+            # 나머지 버튼들 (빈 껍데기)
+            elif text in ["e", "1/x", "²√x", "³√x", "x!", "ln", "log₁₀", "eˣ", "10ˣ", 
+                         "%", "(", ")", "m+", "m-", "mr", "2nd", "xʸ", "ʸ√x", 
+                         "EE", "Rad", "Rand"]:
+                print(f"{text} 버튼 기능은 아직 구현되지 않았습니다.")
                 
         except Exception as e:
             self.display_text = f"Error: {str(e)}"
